@@ -17,8 +17,8 @@ from utility import *
 # multi_size train
 def multi_train(**kwargs):
     parallel = True 
-    opt.model = 'CQT_Net'
-    opt.notes='CQT_Net'
+    opt.model = 'CQTNet'
+    opt.notes='CQTNet'
     opt.batch_size=32
     #opt.load_latest=True
     #opt.load_model_path = ''
@@ -197,7 +197,7 @@ def test(**kwargs):
     opt.num_workers=1
     opt.model = 'CQTNet'
     opt.load_latest = False
-    opt.load_model_path = 'check_points/best.pth'
+    opt.load_model_path = 'check_points/CQTNet.pth'
     opt._parse(kwargs)
     
     model = getattr(models, opt.model)() 

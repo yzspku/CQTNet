@@ -6,7 +6,7 @@ from collections import OrderedDict
 import math
 from .basic_module import BasicModule
 
-class CQT_Net(BasicModule):
+class CQTNet(BasicModule):
     def __init__(self):
         super().__init__()
         self.features = nn.Sequential(OrderedDict([

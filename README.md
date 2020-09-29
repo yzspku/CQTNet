@@ -18,3 +18,21 @@ python main.py multi_train --model='CQTNet' --batch_size=32 --load_latest=False 
 ## Test
 
 python main.py test --model='CQTNet' --load_model_path = 'check_points/CQTNet.pth'
+
+
+
+
+
+
+## Spectrum Augmentation
+After using Spectrum Augmentation in training stage, the model performance has a great improvement. 
+
+Specaugment: A simple data augmentation method for automatic speech recognition.
+
+
+|  Dataset   | MAP  |
+|  ----  | ----  |
+| YouTube350  | 0.933 |
+| Covers80  | 0.860 |
+| Mazurkas  | 0.933 |
+| SHS100K-TEST  | 0.71 |

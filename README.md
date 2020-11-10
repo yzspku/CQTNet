@@ -20,7 +20,8 @@ python main.py multi_train --model='CQTNet' --batch_size=32 --load_latest=False 
 python main.py test --model='CQTNet' --load_model_path = 'check_points/CQTNet.pth'
 
 
-
+## Paramters 
+https://drive.google.com/file/d/1Rv-NuiAKW2rUlNZj8SOs2Iqidqkx30M8/view?usp=sharing
 
 
 

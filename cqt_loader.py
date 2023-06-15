@@ -22,6 +22,7 @@ def cut_data(data, out_length):
         offset = 200 - data.shape[0]
         data = np.pad(data, ((0,offset),(0,0)), "constant")
     return data
+
 def cut_data_front(data, out_length):
     if out_length is not None:
         if data.shape[0] > out_length:
@@ -35,12 +36,30 @@ def cut_data_front(data, out_length):
         offset = 200 - data.shape[0]
         data = np.pad(data, ((0,offset),(0,0)), "constant")
     return data
+
 def shorter(feature, mean_size=2):
     length, height  = feature.shape
     new_f = np.zeros((int(length/mean_size),height),dtype=np.float64)
     for i in range(int(length/mean_size)):
         new_f[i,:] = feature[i*mean_size:(i+1)*mean_size,:].mean(axis=0)
     return new_f
+
+def change_speed(data, l=0.7, r=1.5): # change data.shape[0]
+    new_len = int(data.shape[0]*np.random.uniform(l,r))
+    maxx = np.max(data)+1
+    data0 = PIL.Image.fromarray((data*255.0/maxx).astype(np.uint8))
+    transform = transforms.Compose([
+        transforms.Resize(size=(new_len,data.shape[1])), 
+    ])
+    new_data = transform(data0)
+    return np.array(new_data)/255.0*maxx
+
+def SpecAugment(data):
+    F = 24
+    f = np.random.randint(F)
+    f0 = np.random.randint(84-f)
+    data[f0:f0+f,:]*=0
+    return data
 
 class CQT(Dataset):
     def __init__(self, mode='train', out_length=None):
@@ -66,9 +85,10 @@ class CQT(Dataset):
         self.out_length = out_length
     def __getitem__(self, index):
         transform_train = transforms.Compose([
+            lambda x: SpecAugment(x), #SpecAugment 频谱增强一次
+            lambda x: SpecAugment(x), #SpecAugment 频谱增强 x 2
             lambda x : x.T,
-            #lambda x : change_speed(x, 0.7, 1.3),
-            #lambda x : x-np.mean(x),
+            lambda x : change_speed(x, 0.7, 1.3), # 速度随机变化
             lambda x : x.astype(np.float32) / (np.max(np.abs(x))+ 1e-6),
             lambda x : cut_data(x, self.out_length),
             lambda x : torch.Tensor(x),
@@ -97,16 +117,6 @@ class CQT(Dataset):
         return len(self.file_list)
 
     
-def change_speed(data, l=0.7, r=1.5): # change data.shape[0]
-    new_len = int(data.shape[0]*np.random.uniform(l,r))
-    maxx = np.max(data)+1
-    data0 = PIL.Image.fromarray((data*255.0/maxx).astype(np.uint8))
-    transform = transforms.Compose([
-        transforms.Resize(size=(new_len,data.shape[1])), 
-    ])
-    new_data = transform(data0)
-    return np.array(new_data)/255.0*maxx
-
 if __name__=='__main__':
     train_dataset = HPCP('train', 394)
     trainloader = torch.utils.data.DataLoader(train_dataset, batch_size=128, num_workers=12, shuffle=True)
